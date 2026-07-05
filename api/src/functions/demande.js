@@ -21,7 +21,7 @@ app.http("demande", {
     catch { return { status: 400, jsonBody: { erreur: "JSON attendu" } }; }
 
     // 1. Honeypot : un humain ne remplit jamais ce champ caché
-    if (d.website) return { status: 202, jsonBody: { reference: "OK" } }; // on ne renseigne pas le bot
+    if (d.xq_note || d.website) return { status: 202, jsonBody: { reference: "OK" } }; // on ne renseigne pas le bot
 
     // 2. Champs minimaux + email plausible
     for (const c of CHAMPS_REQUIS) {
@@ -45,7 +45,7 @@ app.http("demande", {
 
     // 5. Relais vers Power Automate (le flux fait tout le reste :
     //    liste blanche email, journal, approbation, Word, PDF, accusé)
-    delete d.website;
+    delete d.xq_note; delete d.website;
     const r = await fetch(flowUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
