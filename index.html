@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demande d'attestation employeur · Osmose RH</title>
+<style>
+  :root{
+    --paper:#F7F5F0; --ink:#2B2B26; --ink-soft:#6B6B60;
+    --sage:#6E7F62; --sage-deep:#55644B; --line:#E2DED4; --card:#FFFFFF;
+    --gold:#B99A55; --err:#A8564A;
+    --mono:"Cascadia Code", ui-monospace, Consolas, monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.55}
+  header{display:flex;align-items:baseline;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--line)}
+  .brand{font-family:Georgia,serif;font-size:20px}
+  .brand em{font-style:normal;color:var(--sage-deep)}
+  .cli-pill{font-family:var(--mono);font-size:12px;color:var(--gold);border:1px solid #E0D3AE;border-radius:99px;padding:3px 12px;background:#F6F1E2}
+
+  main{max-width:620px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-family:Georgia,serif;font-weight:600;font-size:27px;margin-bottom:8px}
+  .sub{color:var(--ink-soft);font-size:14px;margin-bottom:28px}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 28px}
+  .field{margin-bottom:16px}
+  label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+  label .req{color:var(--err)}
+  label .hint{font-weight:400;color:var(--ink-soft)}
+  input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid var(--sage);outline-offset:1px;border-color:var(--sage)}
+  input.invalid{border-color:var(--err)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ferr{display:none;font-size:12px;color:var(--err);margin-top:4px}
+  .ferr.show{display:block}
+  .hp{position:absolute;left:-9999px;top:-9999px}
+
+  button.primary{
+    width:100%;background:var(--sage-deep);color:#fff;border:none;border-radius:9px;
+    padding:13px;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;margin-top:8px;
+  }
+  button.primary:hover{background:#46523E}
+  button.primary:focus-visible{outline:3px solid var(--sage);outline-offset:2px}
+  button.primary:disabled{opacity:.55;cursor:wait}
+
+  .fine{font-size:12px;color:var(--ink-soft);margin-top:14px;text-align:center}
+
+  .done{display:none;text-align:center;padding:46px 28px}
+  .done .check{width:56px;height:56px;border-radius:50%;background:#EAF2E4;border:1px solid #9CBF8C;color:#4E7A3F;font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+  .done h2{font-family:Georgia,serif;font-size:22px;margin-bottom:10px}
+  .done p{color:var(--ink-soft);font-size:14px;max-width:420px;margin:0 auto 6px}
+  .done .ref{font-family:var(--mono);font-size:12.5px;color:var(--sage-deep);margin-top:14px}
+  .demo-note{display:none;margin-top:16px;font-family:var(--mono);font-size:11.5px;color:var(--gold)}
+
+  @media (max-width:520px){ .row{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Osmose <em>RH</em></div>
+  <span class="cli-pill" id="cliPill">Espace client</span>
+</header>
+
+<main>
+  <div id="formWrap">
+    <h1>Demande d'attestation employeur</h1>
+    <p class="sub">Votre demande est prise en charge par votre gestionnaire. Vous recevrez l'attestation en PDF par email, généralement dans la journée ouvrée.</p>
+
+    <form class="panel" id="f" novalidate>
+      <input type="hidden" id="client" name="client" value="">
+      <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="field">
+        <label for="email">Votre adresse email <span class="req">*</span> <span class="hint">— l'attestation sera envoyée à cette adresse</span></label>
+        <input type="email" id="email" required autocomplete="email" placeholder="prenom.nom@votresociete.fr">
+        <div class="ferr" id="e-email">Adresse email invalide.</div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="civilite">Civilité <span class="req">*</span></label>
+          <select id="civilite" required>
+            <option value="">—</option>
+            <option>Madame</option>
+            <option>Monsieur</option>
+          </select>
+          <div class="ferr" id="e-civilite">Champ requis.</div>
+        </div>
+        <div class="field">
+          <label for="nom">Nom et prénom du salarié <span class="req">*</span></label>
+          <input type="text" id="nom" required placeholder="Ex. Sofia Marques">
+          <div class="ferr" id="e-nom">Champ requis.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="naissance">Date de naissance <span class="req">*</span></label>
+          <input type="date" id="naissance" required max="2010-12-31">
+          <div class="ferr" id="e-naissance">Date requise.</div>
+        </div>
+        <div class="field">
+          <label for="entree">Date d'entrée <span class="req">*</span></label>
+          <input type="date" id="entree" required>
+          <div class="ferr" id="e-entree">La date d'entrée ne peut pas être future.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="poste">Intitulé du poste <span class="req">*</span></label>
+          <input type="text" id="poste" required placeholder="Ex. Agent de service">
+          <div class="ferr" id="e-poste">Champ requis.</div>
+        </div>
+        <div class="field">
+          <label for="contrat">Type de contrat <span class="req">*</span></label>
+          <select id="contrat" required>
+            <option value="">—</option>
+            <option>contrat à durée indéterminée (CDI)</option>
+            <option>contrat à durée déterminée (CDD)</option>
+          </select>
+          <div class="ferr" id="e-contrat">Champ requis.</div>
+        </div>
+      </div>
+
+      <button type="submit" class="primary" id="btn">Envoyer la demande</button>
+      <p class="fine">Un accusé de traitement vous sera adressé. Données traitées par Osmose RH dans le cadre de la mission confiée par votre entreprise.</p>
+    </form>
+  </div>
+
+  <div class="done panel" id="done">
+    <div class="check">✓</div>
+    <h2>Demande transmise</h2>
+    <p>Votre demande d'attestation pour <strong id="dNom"></strong> est prise en charge.</p>
+    <p>Vous recevrez le document en PDF à <strong id="dMail"></strong> après validation par votre gestionnaire.</p>
+    <div class="ref" id="dRef"></div>
+    <div class="demo-note" id="demoNote">// mode démo : aucun envoi réel (page ouverte hors de son hébergement /api)</div>
+  </div>
+</main>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+
+  /* Pré-remplissage client par paramètre d'URL : formulaire-attestation.html?client=Nettoie%20Sud%20SAS */
+  const client = new URLSearchParams(location.search).get("client") || "";
+  $("#client").value = client;
+  if(client) $("#cliPill").textContent = client;
+
+  function bad(id, cond){
+    const el = $("#"+id), err = $("#e-"+id);
+    el.classList.toggle("invalid", cond);
+    err.classList.toggle("show", cond);
+    return cond;
+  }
+
+  $("#f").addEventListener("submit", async e => {
+    e.preventDefault();
+    const email=$("#email").value.trim(), civ=$("#civilite").value, nom=$("#nom").value.trim(),
+          nais=$("#naissance").value, ent=$("#entree").value, poste=$("#poste").value.trim(), ct=$("#contrat").value;
+
+    let ko = false;
+    ko = bad("email", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) || ko;
+    ko = bad("civilite", !civ) || ko;
+    ko = bad("nom", nom.length < 3) || ko;
+    ko = bad("naissance", !nais) || ko;
+    ko = bad("entree", !ent || new Date(ent) > new Date()) || ko;
+    ko = bad("poste", poste.length < 2) || ko;
+    ko = bad("contrat", !ct) || ko;
+    if(ko) return;
+
+    const payload = {
+      demarche: "attestation-employeur",
+      client, email,
+      civilite: civ, nomSalarie: nom,
+      dateNaissance: nais, dateEntree: ent,
+      poste, typeContrat: ct,
+      website: $("#website").value /* honeypot : doit rester vide */
+    };
+
+    const btn = $("#btn");
+    btn.disabled = true; btn.textContent = "Envoi en cours…";
+
+    let ref = null, demo = false;
+    try{
+      const r = await fetch("/api/demande", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      const j = await r.json().catch(()=>({}));
+      ref = j.reference || null;
+    }catch(err){
+      /* Hors hébergement (test local) : on montre le parcours sans envoi réel */
+      demo = true;
+    }
+
+    $("#dNom").textContent = civ + " " + nom;
+    $("#dMail").textContent = email;
+    $("#dRef").textContent = ref ? "Référence : " + ref : "";
+    $("#demoNote").style.display = demo ? "block" : "none";
+    $("#formWrap").style.display = "none";
+    $("#done").style.display = "block";
+    window.scrollTo({top:0});
+  });
+})();
+</script>
+</body>
+</html>
